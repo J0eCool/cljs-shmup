@@ -1,0 +1,14 @@
+body {
+  background-color: #222;
+}
+
+p {
+  color: white;
+}
+
+.box {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: red;
+}
