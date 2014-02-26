@@ -1,10 +1,5 @@
-(ns cljs-shmup.core)
-
-(defn time-since [then]
-  (/ (-
-      (js/Date.now)
-      then)
-     1000))
+(ns cljs-shmup.core
+  (:require [cljs-shmup.util :as util]))
 
 (defn set-text [id text]
   (set!
@@ -40,7 +35,7 @@
 
 (let [lastFrame (atom (js/Date.now))]
   (defn update []
-    (let [dT (time-since @lastFrame)]
+    (let [dT (util/time-since @lastFrame)]
       (update-text dT)
       (update-box dT))
     (swap! lastFrame js/Date.now)))
