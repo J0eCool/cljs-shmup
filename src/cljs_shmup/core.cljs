@@ -17,6 +17,14 @@
    "game-body"
    "<div class=\"box\" id=\"player\"></div>"))
 
+(def mousePos (atom {:x 12 :y 15}))
+mousePos
+(:x (deref mousePos))
+
+(def box {:sprite (atom {:id "player" :w 40 :h 65})
+          :pos (atom {:x 450 :y 550})
+          :spd 350})
+
 (defn update-text [dT]
   (set-text "text"
             (str
@@ -25,29 +33,32 @@
              box))
   )
 
-(def mousePos (atom {:x 12 :y 15}))
-mousePos
-
-(def box {:id "player"
-          :pos (atom {:x 450 :y 550})
-          :spd 350})
-(defn update-box [dT]
-  (let [elem (.getElementById js/document (:id box))
+(defn sprite-update [this entity]
+  (let [id (:id @this)
+        elem (.getElementById js/document id)
         style (.-style elem)
-        pos (:pos box)
+        pos @(:pos entity)
+        w (:w @this)
+        h (:h @this)
+        x (- (:x pos) (/ w 2))
+        y (- (:y pos) (/ h 2))]
+    (set! (.-width style) (str w "px"))
+    (set! (.-height style) (str h "px"))
+    (set! (.-left style) (str x "px"))
+    (set! (.-top style) (str y "px"))))
+
+(defn update-box [dT]
+  (let [pos (:pos box)
         deltaPos (vec2/sub @mousePos @pos)
         movDist (min (* dT (:spd box))
                      (vec2/len deltaPos))
         dir (vec2/unit deltaPos)]
-                     ;(vec2/len deltaPos))
-
     (swap! pos (fn [p]
                  (let [])
                  (vec2/add
                   p
                   (vec2/scalar-mult movDist dir))))
-    (set! (.-left style) (str (:x @pos) "px"))
-    (set! (.-top style) (str (:y @pos) "px"))))
+    (sprite-update (:sprite box) box)))
 
 (let [lastFrame (atom (js/Date.now))]
   (defn update []
