@@ -1,4 +1,4 @@
-(ns cljs-shmup.vec2)
+(ns engine.vec2)
 
 (defn len [v]
   (let [x (:x v)

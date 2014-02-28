@@ -1,6 +1,7 @@
 (ns cljs-shmup.core
   (:require [cljs-shmup.util :as util]
-            [cljs-shmup.vec2 :as  vec2]))
+            [engine.vec2 :as  vec2]
+            [engine.sprite :as sprite]))
 
 (defn set-text [id text]
   (set!
@@ -33,20 +34,6 @@ mousePos
              box))
   )
 
-(defn sprite-update [this entity]
-  (let [id (:id @this)
-        elem (.getElementById js/document id)
-        style (.-style elem)
-        pos @(:pos entity)
-        w (:w @this)
-        h (:h @this)
-        x (- (:x pos) (/ w 2))
-        y (- (:y pos) (/ h 2))]
-    (set! (.-width style) (str w "px"))
-    (set! (.-height style) (str h "px"))
-    (set! (.-left style) (str x "px"))
-    (set! (.-top style) (str y "px"))))
-
 (defn update-box [dT]
   (let [pos (:pos box)
         deltaPos (vec2/sub @mousePos @pos)
@@ -58,22 +45,24 @@ mousePos
                  (vec2/add
                   p
                   (vec2/scalar-mult movDist dir))))
-    (sprite-update (:sprite box) box)))
+    (sprite/update (:sprite box) box)))
 
 (let [lastFrame (atom (js/Date.now))]
-  (defn update []
+  (defn game-update []
     (let [dT (util/time-since @lastFrame)]
       (update-text dT)
       (update-box dT))
     (swap! lastFrame js/Date.now)))
 
-(init)
-(.setInterval js/window update 33)
+;(init)
+(.setInterval js/window game-update 33)
 (set!
  (.-onmousemove js/window)
  (fn [e]
    (swap!
     mousePos
-    (fn [] (assoc @mousePos
-             :x (.-clientX e)
-             :y (.-clientY e))))))
+    (fn [p] (vec2/sub
+             (assoc p
+               :x (.-clientX e)
+               :y (.-clientY e))
+             sprite/ctx-pos)))))
