@@ -1,7 +1,9 @@
 (ns cljs-shmup.core
   (:require [cljs-shmup.util :as util]
             [engine.vec2 :as  vec2]
-            [engine.sprite :as sprite]))
+            [engine.component :as component]
+            [cljs-shmup.components.sprite :as sprite]
+            [cljs-shmup.components.transform :as transform]))
 
 (defn set-text [id text]
   (set!
@@ -14,16 +16,17 @@
    html))
 
 (defn init []
-  (set-html
+  #_(set-html
    "game-body"
-   "<div class=\"box\" id=\"player\"></div>"))
+   "<div class=\"box\" id=\"player\"></div>")
+  )
 
 (def mousePos (atom {:x 12 :y 15}))
 mousePos
 (:x (deref mousePos))
 
-(def box {:sprite (atom {:id "player" :w 40 :h 65})
-          :pos (atom {:x 450 :y 550})
+(def box {:sprite (atom (sprite/->Sprite 40 65 "#2c8"))
+          :transform (atom (transform/->Transform 450 550))
           :spd 350})
 
 (defn update-text [dT]
@@ -35,17 +38,19 @@ mousePos
   )
 
 (defn update-box [dT]
-  (let [pos (:pos box)
+  (let [pos (:transform box)
         deltaPos (vec2/sub @mousePos @pos)
         movDist (min (* dT (:spd box))
+
                      (vec2/len deltaPos))
         dir (vec2/unit deltaPos)]
     (swap! pos (fn [p]
-                 (let [])
-                 (vec2/add
-                  p
-                  (vec2/scalar-mult movDist dir))))
-    (sprite/update (:sprite box) box)))
+                 (let [v
+                       (vec2/add
+                        p
+                        (vec2/scalar-mult movDist dir))]
+                   (assoc p :x (:x v) :y (:y v)))))
+    (component/update @(:sprite box) box dT)))
 
 (let [lastFrame (atom (js/Date.now))]
   (defn game-update []
@@ -54,7 +59,7 @@ mousePos
       (update-box dT))
     (swap! lastFrame js/Date.now)))
 
-;(init)
+(init)
 (.setInterval js/window game-update 33)
 (set!
  (.-onmousemove js/window)
