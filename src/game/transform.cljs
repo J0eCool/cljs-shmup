@@ -1,4 +1,4 @@
-(ns cljs-shmup.components.transform
+(ns game.components.transform
   (:require [engine.component :as component]))
 
 (defrecord Transform [x y]

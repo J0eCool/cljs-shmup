@@ -1,9 +1,9 @@
-(ns cljs-shmup.core
-  (:require [cljs-shmup.util :as util]
+(ns game.core
+  (:require [game.util :as util]
             [engine.vec2 :as  vec2]
             [engine.component :as component]
-            [cljs-shmup.components.sprite :as sprite]
-            [cljs-shmup.components.transform :as transform]))
+            [game.components.sprite :as sprite]
+            [game.components.transform :as transform]))
 
 (defn set-text [id text]
   (set!

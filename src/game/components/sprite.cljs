@@ -1,4 +1,4 @@
-(ns cljs-shmup.components.sprite
+(ns game.components.sprite
   (:require [engine.component :as component]))
 
 (let

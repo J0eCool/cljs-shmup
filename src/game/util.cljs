@@ -1,4 +1,4 @@
-(ns cljs-shmup.util)
+(ns game.util)
 
 (defn format-num
   "Makes a number look nicer for display"
