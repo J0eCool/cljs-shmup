@@ -24,6 +24,7 @@
             (let [pos @(:transform entity)
                   x (- (:x pos) (/ w 2))
                   y (- (:y pos) (/ h 2))]
-              (.clearRect ctx 0 0 WIDTH HEIGHT)
+              (set! (.-fillStyle ctx) "#222")
+              (.fillRect ctx 0 0 WIDTH HEIGHT)
               (set! (.-fillStyle ctx) color)
               (.fillRect ctx x y w h)))))
